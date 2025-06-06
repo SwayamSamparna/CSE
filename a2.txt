@@ -1,0 +1,203 @@
+CREATE table Instructor (
+  ID number(5),
+  Name varchar2(30),
+  Dept_name varchar2(20),
+  Salary number(6)
+);
+
+CREATE Table Course (
+  Course_id Varchar2(10),
+  Title Varchar2(30),
+  Dept_name Varchar2(20),
+  Credits Number(2)
+);
+
+CREATE table Prereq (
+  Course_id varchar2(10),
+  Prereq_id varchar2(10)
+);
+
+CREATE table Department (
+  Dept_name Varchar2(20),
+  Building Varchar2(20),
+  Budget Number(10)
+);
+
+CREATE table Teaches (
+  ID number(5),
+  Course_id Varchar2(10),
+  Sec_id number(2),
+  Semester Varchar2(10),
+  year number(4)
+);
+
+INSERT into Instructor values(10101, 'Srinivasan', 'Comp. Sci.', 65000);
+INSERT into Instructor values(12121, 'Wu', 'Finance', 90000);
+INSERT into Instructor values(15151, 'Mozart', 'Music', 40000);
+INSERT into Instructor values(22222, 'Einstein', 'Physics', 95000);
+INSERT into Instructor values(32343, 'El Said', 'History', 60000);
+INSERT into Instructor values(33456, 'Gold', 'Physics', 87000);
+INSERT into Instructor values(45565, 'Katz', 'Comp. Sci.', 75000);
+INSERT into Instructor values(58583, 'Califieri', 'History', 62000);
+INSERT into Instructor values(76543, 'Singh', 'Finance', 80000);
+INSERT into Instructor values(76766, 'Crick', 'Biology', 72000);
+INSERT into Instructor values(83821, 'Brandt', 'Comp. Sci.', 92000);
+INSERT into Instructor values(98345, 'Kim', 'Elec. Eng.', 80000);
+
+INSERT into Course values('BIO-101', 'Intro. to Biology', 'Biology', 4);
+INSERT into Course values('BIO-301', 'Genetics', 'Biology', 4);
+INSERT into Course values('BIO-399', 'Computational Biology', 'Biology', 3);
+INSERT into Course values('CS-101', 'Intro. to Computer Science', 'Comp. Sci.', 4);
+INSERT into Course values('CS-190', 'Game Design', 'Comp. Sci.', 4);
+INSERT into Course values('CS-315', 'Robotics', 'Comp. Sci.', 3);
+INSERT into Course values('CS-319', 'Image Processing', 'Comp. Sci.', 3);
+INSERT into Course values('CS-347', 'Database System Concepts', 'Comp. Sci.', 3);
+INSERT into Course values('EE-181', 'Intro. to Digital Systems', 'Elec. Eng.', 3);
+INSERT into Course values('FIN-201', 'Investment Banking', 'Finance', 3);
+INSERT into Course values('HIS-351', 'World History', 'History', 3);
+INSERT into Course values('MU-199', 'Music Video Production', 'Music', 3);
+INSERT into Course values('PHY-101', 'Physical Principles', 'Physics', 4);
+
+INSERT into Prereq values('BIO-301', 'BIO-101');
+INSERT into Prereq values('BIO-399', 'BIO-101');
+INSERT into Prereq values('CS-190', 'CS-101');
+INSERT into Prereq values('CS-315', 'CS-101');
+INSERT into Prereq values('CS-319', 'CS-101');
+INSERT into Prereq values('CS-347', 'CS-101');
+INSERT into Prereq values('EE-181', 'PHY-101');
+
+INSERT into Department values('Biology', 'Watson', 90000);
+INSERT into Department values('Comp. Sci.', 'Taylor', 100000);
+INSERT into Department values('Elec. Eng.', 'Taylor', 85000);
+INSERT into Department values('Finance', 'Painter', 120000);
+INSERT into Department values('History', 'Painter', 50000);
+INSERT into Department values('Music', 'Packard', 80000);
+INSERT into Department values('Physics', 'Watson', 70000);
+
+INSERT into Teaches values(10101, 'CS-101', 1, 'Fall', 2009);
+INSERT into Teaches values(10101, 'CS-315', 1, 'Spring', 2010);
+INSERT into Teaches values(10101, 'CS-347', 1, 'Fall', 2009);
+INSERT into Teaches values(12121, 'FIN-201', 1, 'Spring', 2010);
+INSERT into Teaches values(15151, 'MU-199', 1, 'Spring', 2010);
+INSERT into Teaches values(22222, 'PHY-101', 1, 'Fall', 2009);
+INSERT into Teaches values(32343, 'HIS-351', 1, 'Spring', 2010);
+INSERT into Teaches values(45565, 'CS-101', 1, 'Spring', 2010);
+INSERT into Teaches values(45565, 'CS-319', 1, 'Spring', 2010);
+INSERT into Teaches values(76766, 'BIO-101', 1, 'Summer', 2009);
+INSERT into Teaches values(76766, 'BIO-301', 1, 'Summer', 2010);
+INSERT into Teaches values(83821, 'CS-190', 1, 'Spring', 2009);
+INSERT into Teaches values(83821, 'CS-190', 2, 'Spring', 2009);
+INSERT into Teaches values(83821, 'CS-319', 2, 'Spring', 2010);
+INSERT into Teaches values(98345, 'EE-181', 1, 'Spring', 2009);
+
+(a) Display the structure of all the tables you have created in assignment (1)
+
+DESC Instructor;
+DESC Course;
+DESC Prereq;
+DESC Department;
+DESC Teaches;
+
+(b)Display the contents of all the tables you have created in assignment (l).
+
+SELECT * from Instructor;
+SELECT * from Course;
+SELECT * from Prereq;
+SELECT * from Department;
+SELECT * from Teaches;
+
+(c) Display the name and department of each instructor.
+
+SELECT Name, Dept_name from Instructor;
+ 
+(d) Display the name and salary of Comp. Sci. Instructors. 
+
+SELECT Name, Salary from Instructor where Dept_name = 'Comp. Sci.';
+
+(e) Display the records of instructor who belongs to Physics department and getting salary less than 90000.
+
+SELECT * from Instructor where Dept_name = 'Physics' and Salary < 90000;
+
+(f) Display the name of the instructors who do not belong to Comp Sci. Department.
+
+SELECT Name from Instructor where Dept_name != 'Comp. Sci.';
+ 
+(g) Display the names of the different department distinctly available in Instructor table
+
+SELECT distinct Dept_name from Instructor;
+
+(h) Display all Course_id’s that are taught in Spring semester of 2009
+
+SELECT Course_id from Teaches where Semester = 'Spring' and year = 2009;
+
+(i) Display course titles that are taught in Comp Sci. Department and do not have credit equals to 3. 
+
+SELECT Title from Course where Dept_name = 'Comp. Sci.' and Credits != 3;
+
+(j) Display all columns of course table sorted in descending order of department names.
+
+SELECT * from Course order by Dept_name DESC;
+
+(k) Add a date_of_join column to instructor table. 
+
+alter table Instructor add date_of_join DATE;
+
+(l) Insert date values to existing rows. 
+
+UPDATE Instructor SET date_of_join = TO_DATE('2010-01-15', 'YYYY-MM-DD') WHERE ID = 10101;
+UPDATE Instructor SET date_of_join = TO_DATE('2011-03-22', 'YYYY-MM-DD') WHERE ID = 12121;
+UPDATE Instructor SET date_of_join = TO_DATE('2009-06-10', 'YYYY-MM-DD') WHERE ID = 15151;
+UPDATE Instructor SET date_of_join = TO_DATE('2008-09-05', 'YYYY-MM-DD') WHERE ID = 22222;
+UPDATE Instructor SET date_of_join = TO_DATE('2012-11-12', 'YYYY-MM-DD') WHERE ID = 32343;
+UPDATE Instructor SET date_of_join = TO_DATE('2013-08-19', 'YYYY-MM-DD') WHERE ID = 33456;
+UPDATE Instructor SET date_of_join = TO_DATE('2011-05-20', 'YYYY-MM-DD') WHERE ID = 45565;
+UPDATE Instructor SET date_of_join = TO_DATE('2014-07-14', 'YYYY-MM-DD') WHERE ID = 58583;
+UPDATE Instructor SET date_of_join = TO_DATE('2010-02-25', 'YYYY-MM-DD') WHERE ID = 76543;
+UPDATE Instructor SET date_of_join = TO_DATE('2009-12-01', 'YYYY-MM-DD') WHERE ID = 76766;
+UPDATE Instructor SET date_of_join = TO_DATE('2012-04-08', 'YYYY-MM-DD') WHERE ID = 83821;
+UPDATE Instructor SET date_of_join = TO_DATE('2013-10-30', 'YYYY-MM-DD') WHERE ID = 98345;
+SELECT ID, Name, date_of_join FROM Instructor;
+
+(m) Change the name of dept_name to department in all the tables. 
+
+alter table Instructor RENAME COLUMN Dept_name TO Department;
+alter table Course RENAME COLUMN Dept_name TO Department;
+alter table Department RENAME COLUMN Dept_name TO Department;
+
+DESC Instructor;
+DESC Course;
+DESC Department;
+
+(n) Change the name of “Prereq” table with new name “Prerequired”
+
+RENAME Prereq TO Prerequired;
+DESC Prerequired;
+
+(o) Change Course_id column name to Sub_code. 
+
+alter table Course RENAME Column Course_id TO Sub_Code;
+DESC Course;
+
+(p) Change the data type of name to varchar (50). 
+
+alter table Instructor modify Name Varchar2(50);
+DESC Instructor;
+
+(q) Change the name of Instructor table to Faculty_Info. 
+
+alter table Instructor modify Name Varchar2(50);
+DESC Instructor;
+
+(r) Change the Column size of Course_id in Course table from 10 to 8
+
+ALTER table Course modify Sub_Code Varchar2(8);
+DESC Course;
+
+(s) Delete the content of the table Prereq along with its description. 
+
+DROP table Prerequired;
+
+(t) Change the column name “Building” of Department table by new column name “Builder”.
+
+alter table Department RENAME Column Building TO Builder;
+DESC Department;

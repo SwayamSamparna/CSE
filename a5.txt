@@ -1,0 +1,233 @@
+A) Write the expression for the following set of queries in SQL, based on the set of schemas
+of Assignment (4), using concept of sub query.
+1. Find out the name, phone_no and cust_no of customer having Account_no “A0004”.
+2. Find out the name of the customer who has not taken any loan.
+3. Find out the account_no and Balance of customer with cust_no = “C0010”.
+4. Find out the branch_city where “ASLESHA TIWARI” has taken a loan.
+5. Find out the installment details of customer named “ANKITA SINGH”.
+6. Find out the branch name and branch city, in which “ABHIJIT MISHRA” has an account.
+7. Create a table named ACCOUNT_TYPE from ACCOUNT table with two columns named
+as ACCOUNT_NO and TYPE without taking any records from ACCOUNT table.
+8. Insert the account no and type from ACCOUNT table into the ACCOUNT_TYPE table
+whose balance is less than 50000.
+9. UPDTAE the account type to FD in ACCOUNT_TYPE table for the customer with
+CUST_NO equal to C0007.
+10. Delete from ACCOUNT_TYPE table the details of account whose balance is less than
+20000.
+11. Find out the account_no that has greater balance than some accounts of type FD. (Use
+>some clause)
+12. Find out the account_no that has grater balance than all accounts of type FD. (Use >all
+clause)
+13. Display the details of the branch in which some loans are taken. (Use exist clause)
+14. Display the details of the loan for which no instalments are paid. (Use not exist clause)
+15. Increase all accounts with balance over 80000 by 6%, and all other accounts receive 5%.
+(Use case statement)
+B) Write the expression for the following set of queries in SQL, based on the set of schemasof
+Assignment (4), using concept of join.
+1. Find out the Loan_nos where the loans are taken from any branch with branch_city
+=MUMBAI.
+2. Find the Type of the accounts available in any branch with branch_city =DELHI.
+3. Find out the Name and Ph_no of customers who have account balance more than 100000.
+4. Find out Installment_no and Installment amount of customer with Name= RAJ ANAND
+SINGH.
+5. Find out the Name of the customers who do not have account of Type=SB.
+6. Find out the Name of the customers who have paid installments of Amount 50000 against
+his/her loan.
+7. Find out the Ph_no of customers having account at branch with Branch_name equal to
+SALTLAKE.
+8. Find out the Branch_name and Branch_city where customer with Name=ABHIJIT
+MISHRA has his account.
+9. Find out the Types of account and the account Balance of customer with
+Name=’SWAROOP RAY’
+10. Find all branch codes where the total balance is greater than the average of the total balance
+at all departments. (Use with clause).
+
+-- 1. SQL Expressions using Suitable SQL Operators
+
+-- (a) SELECT name, phone_no, cust_no
+FROM CUSTOMER
+WHERE cust_no = (
+    SELECT cust_no
+    FROM ACCOUNT
+    WHERE account_no = 'A0004'
+);
+
+-- (b) SELECT name
+FROM CUSTOMER
+WHERE cust_no NOT IN (
+    SELECT cust_no
+    FROM LOAN
+);
+
+-- (c) SELECT A.ACCOUNT_NO, A.BALANCE
+FROM ACCOUNT A
+JOIN DEPOSITOR D ON A.ACCOUNT_NO = D.ACCOUNT_NO
+WHERE D.CUST_NO = 'C0010';
+
+-- (d) SELECT B.BRANCH_CITY
+FROM BRANCH B
+WHERE B.BRANCH_CODE = (
+    SELECT L.BRANCH_CODE
+    FROM LOAN L
+    WHERE L.CUST_NO = (
+        SELECT CUST_NO FROM CUSTOMER WHERE NAME = 'ASLESHA TIWARI'
+    )
+);
+
+-- (e) SELECT I.*
+FROM INSTALLMENT I
+WHERE I.LOAN_NO IN (
+    SELECT L.LOAN_NO
+    FROM LOAN L
+    WHERE L.CUST_NO = (
+        SELECT CUST_NO FROM CUSTOMER WHERE NAME = 'ANKITA SINGH'
+    )
+);
+
+-- (f) SELECT B.BRANCH_NAME, B.BRANCH_CITY
+FROM BRANCH B
+WHERE B.BRANCH_CODE IN (
+    SELECT A.BRANCH_CODE
+    FROM ACCOUNT A
+    JOIN DEPOSITOR D ON A.ACCOUNT_NO = D.ACCOUNT_NO
+    WHERE D.CUST_NO = (
+        SELECT CUST_NO FROM CUSTOMER WHERE NAME = 'ABHIJIT MISHRA'
+    )
+);
+
+-- (g) CREATE TABLE ACCOUNT_TYPE AS
+SELECT ACCOUNT_NO, TYPE
+FROM ACCOUNT
+WHERE 1=0;
+
+-- (h) INSERT INTO ACCOUNT_TYPE (ACCOUNT_NO, TYPE)
+SELECT ACCOUNT_NO, TYPE
+FROM ACCOUNT
+WHERE BALANCE < 50000;
+
+-- (i) UPDATE ACCOUNT_TYPE
+SET TYPE = 'FD'
+WHERE ACCOUNT_NO IN (
+    SELECT A.ACCOUNT_NO
+    FROM ACCOUNT A
+    JOIN DEPOSITOR D ON A.ACCOUNT_NO = D.ACCOUNT_NO
+    WHERE D.CUST_NO = 'C0007'
+);
+
+-- (j) DELETE FROM ACCOUNT_TYPE
+WHERE ACCOUNT_NO IN (
+    SELECT ACCOUNT_NO
+    FROM ACCOUNT
+    WHERE BALANCE < 20000
+);
+
+-- (k) SELECT ACCOUNT_NO
+FROM ACCOUNT
+WHERE BALANCE > SOME (
+    SELECT BALANCE
+    FROM ACCOUNT
+    WHERE TYPE = 'FD'
+);
+
+-- (l) SELECT ACCOUNT_NO
+FROM ACCOUNT
+WHERE BALANCE > ALL (
+    SELECT BALANCE
+    FROM ACCOUNT
+    WHERE TYPE = 'FD'
+);
+
+-- (m) SELECT *
+FROM BRANCH B
+WHERE EXISTS (
+    SELECT 1
+    FROM LOAN L
+    WHERE L.BRANCH_CODE = B.BRANCH_CODE
+);
+
+-- (n) SELECT *
+FROM LOAN L
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM INSTALLMENT I
+    WHERE I.LOAN_NO = L.LOAN_NO
+);
+
+-- (o) UPDATE ACCOUNT
+SET BALANCE = BALANCE + 
+  CASE 
+    WHEN BALANCE > 80000 THEN BALANCE * 0.06
+    ELSE BALANCE * 0.05
+  END;
+
+-- 2. SQL Expressions using Suitable SQL Aggregate Functions
+
+-- (a) SELECT L.LOAN_NO
+FROM LOAN L
+JOIN BRANCH B ON L.BRANCH_CODE = B.BRANCH_CODE
+WHERE B.BRANCH_CITY = 'MUMBAI';
+
+-- (b) SELECT DISTINCT A.TYPE
+FROM ACCOUNT A
+JOIN BRANCH B ON A.BRANCH_CODE = B.BRANCH_CODE
+WHERE B.BRANCH_CITY = 'DELHI';
+
+-- (c) SELECT DISTINCT C.NAME, C.PHONE_NO
+FROM CUSTOMER C
+JOIN DEPOSITOR D ON C.CUST_NO = D.CUST_NO
+JOIN ACCOUNT A ON D.ACCOUNT_NO = A.ACCOUNT_NO
+WHERE A.BALANCE > 100000;
+
+-- (d) SELECT I.INST_NO, I.INST_AMOUNT
+FROM INSTALLMENT I
+JOIN LOAN L ON I.LOAN_NO = L.LOAN_NO
+JOIN CUSTOMER C ON L.CUST_NO = C.CUST_NO
+WHERE C.NAME = 'RAJ ANAND SINGH';
+
+-- (e) SELECT DISTINCT C.NAME
+FROM CUSTOMER C
+WHERE C.CUST_NO NOT IN (
+    SELECT D.CUST_NO
+    FROM DEPOSITOR D
+    JOIN ACCOUNT A ON D.ACCOUNT_NO = A.ACCOUNT_NO
+    WHERE A.TYPE = 'SB'
+);
+
+-- (f) SELECT DISTINCT C.NAME
+FROM CUSTOMER C
+JOIN LOAN L ON C.CUST_NO = L.CUST_NO
+JOIN INSTALLMENT I ON L.LOAN_NO = I.LOAN_NO
+WHERE I.INST_AMOUNT = 50000;
+
+-- (g) SELECT DISTINCT C.PHONE_NO
+FROM CUSTOMER C
+JOIN DEPOSITOR D ON C.CUST_NO = D.CUST_NO
+JOIN ACCOUNT A ON D.ACCOUNT_NO = A.ACCOUNT_NO
+JOIN BRANCH B ON A.BRANCH_CODE = B.BRANCH_CODE
+WHERE B.BRANCH_NAME = 'SALTLAKE BRANCH';
+
+-- (h) SELECT DISTINCT B.BRANCH_NAME, B.BRANCH_CITY
+FROM CUSTOMER C
+JOIN DEPOSITOR D ON C.CUST_NO = D.CUST_NO
+JOIN ACCOUNT A ON D.ACCOUNT_NO = A.ACCOUNT_NO
+JOIN BRANCH B ON A.BRANCH_CODE = B.BRANCH_CODE
+WHERE C.NAME = 'ABHIJIT MISHRA';
+
+-- (i) SELECT A.TYPE, A.BALANCE
+FROM CUSTOMER C
+JOIN DEPOSITOR D ON C.CUST_NO = D.CUST_NO
+JOIN ACCOUNT A ON D.ACCOUNT_NO = A.ACCOUNT_NO
+WHERE C.NAME = 'SWAROOP RAY';
+
+-- (j) WITH branch_total AS (
+    SELECT BRANCH_CODE, SUM(BALANCE) AS total_balance
+    FROM ACCOUNT
+    GROUP BY BRANCH_CODE
+),
+avg_total AS (
+    SELECT AVG(total_balance) AS avg_bal
+    FROM branch_total
+)
+SELECT BRANCH_CODE
+FROM branch_total
+WHERE total_balance > (SELECT avg_bal FROM avg_total);
